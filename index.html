@@ -53,8 +53,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: calc(18px + env(safe-area-inset-top)) 14px
-          calc(18px + env(safe-area-inset-bottom)) 14px;
+        padding: calc(8px + env(safe-area-inset-top)) 10px
+          calc(8px + env(safe-area-inset-bottom)) 10px;
         touch-action: none;
       }
 
@@ -70,7 +70,7 @@
         height: min(
           calc(
             100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) -
-              36px
+              12px
           ),
           860px
         );
@@ -87,7 +87,7 @@
       .screen {
         position: absolute;
         inset: 0;
-        padding: 18px 14px 18px;
+        padding: 12px 12px 12px;
         display: none;
       }
 
@@ -165,6 +165,10 @@
         transform: translateY(-2px);
       }
 
+      .char-card.hidden-char {
+        display: none;
+      }
+
       .char-emoji {
         font-size: 42px;
         margin-bottom: 8px;
@@ -174,6 +178,7 @@
         font-size: 18px;
         font-weight: 800;
         margin-bottom: 6px;
+        color: #ffffff;
       }
 
       .char-desc {
@@ -220,16 +225,16 @@
       }
 
       .game-screen {
-        gap: 8px;
+        gap: 6px;
       }
 
       .topbar {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 20px;
-        padding: 10px;
+        border-radius: 18px;
+        padding: 7px;
         display: grid;
-        gap: 7px;
+        gap: 4px;
         backdrop-filter: blur(8px);
       }
 
@@ -243,13 +248,13 @@
       .char-badge {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         min-width: 0;
       }
 
       .char-avatar {
-        width: 42px;
-        height: 42px;
+        width: 34px;
+        height: 34px;
         border-radius: 14px;
         background: linear-gradient(
           180deg,
@@ -259,7 +264,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 23px;
+        font-size: 19px;
         border: 1px solid rgba(255, 255, 255, 0.06);
         flex-shrink: 0;
       }
@@ -269,12 +274,12 @@
       }
 
       .char-mini-name {
-        font-size: 13px;
+        font-size: 11px;
         font-weight: 800;
       }
 
       .char-mini-sub {
-        font-size: 10px;
+        font-size: 8px;
         color: var(--muted);
         white-space: nowrap;
         overflow: hidden;
@@ -282,58 +287,67 @@
         max-width: 180px;
       }
 
-      .scene-indicator {
-        font-size: 12px;
-        color: var(--muted);
-        font-weight: 700;
+      .menu-btn {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font-size: 11px;
+        font-weight: 800;
+        padding: 6px 9px;
+        border-radius: 11px;
+        cursor: pointer;
         flex-shrink: 0;
+      }
+
+      .menu-btn:active {
+        transform: scale(0.98);
       }
 
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
+        gap: 4px;
       }
 
       .stat-box {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 13px;
-        padding: 6px 6px 7px;
+        border-radius: 11px;
+        padding: 4px 4px 5px;
         text-align: center;
       }
 
       .stat-label {
         color: var(--muted);
-        font-size: 9px;
-        margin-bottom: 3px;
+        font-size: 7px;
+        margin-bottom: 2px;
       }
 
       .stat-value {
         font-weight: 900;
-        font-size: 13px;
+        font-size: 11px;
         line-height: 1.1;
       }
 
       .resource-row {
         display: grid;
-        gap: 7px;
+        gap: 5px;
       }
 
       .status-block {
         display: grid;
-        gap: 5px;
+        gap: 3px;
       }
 
       .status-line {
         display: flex;
         justify-content: space-between;
-        font-size: 11px;
+        font-size: 9px;
         color: var(--muted);
       }
 
       .bar {
-        height: 10px;
+        height: 8px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 999px;
         overflow: hidden;
@@ -357,14 +371,14 @@
 
       .buffs-row {
         display: flex;
-        gap: 6px;
+        gap: 4px;
         flex-wrap: wrap;
-        min-height: 22px;
+        min-height: 16px;
       }
 
       .buff-pill {
-        font-size: 10px;
-        padding: 5px 8px;
+        font-size: 8px;
+        padding: 3px 6px;
         border-radius: 999px;
         background: rgba(116, 192, 252, 0.12);
         border: 1px solid rgba(116, 192, 252, 0.24);
@@ -374,10 +388,10 @@
 
       .feed-zone {
         position: relative;
-        flex: 1;
+        flex: 1 1 auto;
         overflow: hidden;
-        border-radius: 28px;
-        min-height: 0;
+        border-radius: 22px;
+        min-height: 300px;
         touch-action: none;
       }
 
@@ -390,11 +404,11 @@
           rgba(255, 255, 255, 0.02)
         );
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 28px;
-        padding: 16px 16px 14px;
+        border-radius: 22px;
+        padding: 12px 12px 10px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 7px;
         transition:
           transform 0.3s cubic-bezier(0.22, 0.9, 0.3, 1),
           opacity 0.3s ease;
@@ -605,32 +619,32 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
+        gap: 8px;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
       }
 
       .event-type {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 7px 10px;
+        gap: 5px;
+        padding: 6px 9px;
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.06);
       }
 
       .event-risk {
-        font-size: 11px;
-        padding: 6px 9px;
+        font-size: 10px;
+        padding: 5px 8px;
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.04);
       }
 
       .event-visual {
         flex: 1;
-        min-height: 148px;
+        min-height: 124px;
         border-radius: 24px;
         border: 1px solid rgba(255, 255, 255, 0.06);
         background: linear-gradient(
@@ -642,20 +656,20 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         position: relative;
         overflow: hidden;
       }
 
       .event-icon {
-        font-size: 62px;
+        font-size: 54px;
         line-height: 1;
         filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.22));
         z-index: 1;
       }
 
       .event-title {
-        font-size: 26px;
+        font-size: 23px;
         font-weight: 900;
         letter-spacing: -0.04em;
         text-align: center;
@@ -665,7 +679,7 @@
 
       .event-sub {
         margin: 0;
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
         text-align: center;
         line-height: 1.5;
@@ -690,39 +704,39 @@
       .event-info-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        gap: 7px;
       }
 
       .mini-info {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        padding: 10px;
-        min-height: 68px;
+        border-radius: 14px;
+        padding: 9px;
+        min-height: 60px;
       }
 
       .mini-info-label {
-        font-size: 10px;
+        font-size: 9px;
         color: var(--muted);
         margin-bottom: 6px;
         font-weight: 700;
       }
 
       .mini-info-value {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 800;
         line-height: 1.4;
       }
 
       .progress-wrap {
         display: grid;
-        gap: 6px;
+        gap: 5px;
       }
 
       .progress-head {
         display: flex;
         justify-content: space-between;
-        font-size: 11px;
+        font-size: 10px;
         color: var(--muted);
         font-weight: 700;
       }
@@ -735,13 +749,13 @@
       .controls {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        gap: 6px;
       }
 
       .action-btn {
-        padding: 13px 10px;
-        font-size: 14px;
-        min-height: 50px;
+        padding: 11px 9px;
+        font-size: 13px;
+        min-height: 44px;
         color: var(--text);
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
@@ -782,14 +796,14 @@
 
       .bottom-panel {
         display: grid;
-        gap: 8px;
+        gap: 6px;
       }
 
       .help-row {
         display: flex;
         justify-content: space-between;
-        gap: 8px;
-        font-size: 10px;
+        gap: 6px;
+        font-size: 9px;
         color: var(--muted);
         padding: 0 2px;
       }
@@ -797,11 +811,11 @@
       .log-box {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 18px;
-        padding: 10px 12px;
-        min-height: 88px;
-        height: 88px;
-        max-height: 88px;
+        border-radius: 16px;
+        padding: 8px 10px;
+        min-height: 74px;
+        height: 74px;
+        max-height: 74px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -812,16 +826,16 @@
       #logList {
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 2px;
         min-height: 0;
         overflow: hidden;
-        justify-content: center;
+        justify-content: flex-end;
       }
 
       .log-item {
-        font-size: 11px;
-        line-height: 1.35;
-        min-height: calc(11px * 1.35);
+        font-size: 10px;
+        line-height: 1.3;
+        min-height: calc(10px * 1.3);
         color: #e5e9f2;
         opacity: 0.96;
         white-space: nowrap;
@@ -909,7 +923,7 @@
       .result-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 8px;
         margin-bottom: 16px;
         text-align: left;
       }
@@ -937,7 +951,7 @@
           font-size: 34px;
         }
         .event-title {
-          font-size: 23px;
+          font-size: 19px;
         }
         .event-info-grid {
           grid-template-columns: 1fr;
@@ -973,6 +987,18 @@
               기본 공격력이 높다. 대신 회복 효율이 조금 낮다.
             </div>
           </button>
+          <button
+            class="char-card hidden-char"
+            data-char="squirrel"
+            aria-hidden="true"
+            tabindex="-1"
+          >
+            <div class="char-emoji">🐿️</div>
+            <div class="char-name">다람쥐</div>
+            <div class="char-desc">
+              숨겨진 캐릭터. 엄청난 능력치를 지닌 전설의 수집가.
+            </div>
+          </button>
         </div>
 
         <button class="primary-btn" id="startBtn">게임 시작</button>
@@ -992,7 +1018,7 @@
                 </div>
               </div>
             </div>
-            <div class="scene-indicator" id="sceneText">장면 1</div>
+            <button class="menu-btn" id="menuBtn">나가기</button>
           </div>
 
           <div class="stats-grid">
@@ -1064,8 +1090,8 @@
 
           <div class="result-grid">
             <div class="result-card">
-              <div class="result-label">도달 장면</div>
-              <div class="result-value" id="resScene">0</div>
+              <div class="result-label">최종 점수</div>
+              <div class="result-value" id="resScore">0</div>
             </div>
             <div class="result-card">
               <div class="result-label">레벨</div>
@@ -1097,7 +1123,7 @@
     <script>
       (() => {
         // 버전 관리(ver)
-        const VERSION = "1.1.4";
+        const VERSION = "1.1.6";
         document.getElementById("version").textContent = VERSION;
 
         const BASE_STAY_TIME = 2000;
@@ -1122,6 +1148,16 @@
             cheeseMultiplier: 1,
             healMultiplier: 0.9,
             desc: "공격력 +2, 회복 효율 -10%",
+          },
+          squirrel: {
+            key: "squirrel",
+            name: "다람쥐",
+            emoji: "🐿️",
+            hp: 52,
+            atk: 10,
+            cheeseMultiplier: 1.45,
+            healMultiplier: 1.2,
+            desc: "숨겨진 캐릭터 · 공격력 +5, 치즈 효율 +45%, 회복 효율 +20%",
           },
         };
 
@@ -1728,7 +1764,7 @@
           charAvatar: document.getElementById("charAvatar"),
           charName: document.getElementById("charName"),
           charTrait: document.getElementById("charTrait"),
-          sceneText: document.getElementById("sceneText"),
+          menuBtn: document.getElementById("menuBtn"),
 
           hpText: document.getElementById("hpText"),
           hpFill: document.getElementById("hpFill"),
@@ -1746,7 +1782,7 @@
           stayIndicator: document.getElementById("stayIndicator"),
           floatingHearts: document.getElementById("floatingHearts"),
 
-          resScene: document.getElementById("resScene"),
+          resScore: document.getElementById("resScore"),
           resLevel: document.getElementById("resLevel"),
           resCheese: document.getElementById("resCheese"),
           resKills: document.getElementById("resKills"),
@@ -1768,6 +1804,7 @@
           player: null,
           touchStartY: null,
           touchStartX: null,
+          randomClickCount: 0,
         };
 
         function randInt(min, max) {
@@ -1778,12 +1815,21 @@
           return arr[Math.floor(Math.random() * arr.length)];
         }
 
+        function updateCharacterSelectionUI() {
+          els.characterCards.forEach((c) =>
+            c.classList.toggle(
+              "selected",
+              c.dataset.char === state.selectedCharacter,
+            ),
+          );
+        }
+
         function addLog(text) {
           const time = new Date();
-          const hh = String(time.getHours()).padStart(2, "0");
           const mm = String(time.getMinutes()).padStart(2, "0");
-          state.logs.unshift(`<small>${hh}:${mm}</small> ${text}`);
-          state.logs = state.logs.slice(0, 4);
+          const ss = String(time.getSeconds()).padStart(2, "0");
+          state.logs.push(`<small>${mm}:${ss}</small> ${text}`);
+          state.logs = state.logs.slice(-3);
           els.logList.innerHTML = state.logs
             .map((item) => `<div class="log-item">${item}</div>`)
             .join("");
@@ -1792,21 +1838,22 @@
         function setupCharacterSelection() {
           els.characterCards.forEach((card) => {
             card.addEventListener("click", () => {
+              state.randomClickCount = 0;
               state.selectedCharacter = card.dataset.char;
-              els.characterCards.forEach((c) =>
-                c.classList.toggle("selected", c === card),
-              );
+              updateCharacterSelectionUI();
             });
           });
 
           els.randomBtn.addEventListener("click", () => {
-            state.selectedCharacter = Math.random() > 0.5 ? "mouse" : "cat";
-            els.characterCards.forEach((c) =>
-              c.classList.toggle(
-                "selected",
-                c.dataset.char === state.selectedCharacter,
-              ),
-            );
+            state.randomClickCount += 1;
+            if (state.randomClickCount >= 3) {
+              state.selectedCharacter = "squirrel";
+              addLog("숨겨진 캐릭터의 기척이 느껴진다...");
+              els.randomBtn.textContent = "랜덤 캐릭터 선택 ✨";
+            } else {
+              state.selectedCharacter = Math.random() > 0.5 ? "mouse" : "cat";
+            }
+            updateCharacterSelectionUI();
           });
         }
 
@@ -1821,6 +1868,7 @@
             atk: char.atk,
             cheese: 0,
             totalCheeseEarned: 0,
+            score: 0,
             level: 1,
             xp: 0,
             xpToNext: 12,
@@ -1949,6 +1997,25 @@
           return icons[type] || "•";
         }
 
+        function getSceneScore(type, stage) {
+          const baseScores = {
+            monster: 12,
+            boss: 40,
+            heal: 8,
+            buff: 10,
+            trap: 9,
+            treasure: 14,
+            shop: 7,
+            special: 13,
+            "cheese-farm": 11,
+            blacksmith: 12,
+            quest: 13,
+            gamble: 15,
+            shrine: 12,
+          };
+          return (baseScores[type] || 10) + Math.floor(stage * 1.5);
+        }
+
         function weightedRandomTemplate() {
           const pool = [];
           EVENT_POOL.forEach((template) => {
@@ -1972,6 +2039,7 @@
           const icon = pick(template.icons);
 
           state.currentTemplate = template;
+          const sceneScore = getSceneScore(template.type, state.stage);
           state.currentEvent = {
             ...eventData,
             type: template.type,
@@ -1980,8 +2048,10 @@
             description: template.description,
             riskText: template.riskText,
             rewardText: template.rewardText,
+            sceneScore,
             liked: false,
           };
+          state.player.score += sceneScore;
           state.tickElapsed = 0;
 
           renderEventCard(immediate);
@@ -2013,7 +2083,7 @@
           <div class="event-info-grid">
             <div class="mini-info">
               <div class="mini-info-label">기대 보상</div>
-              <div class="mini-info-value">${state.currentEvent.rewardText}</div>
+              <div class="mini-info-value">${state.currentEvent.rewardText}<br />점수 +${state.currentEvent.sceneScore}</div>
             </div>
             <div class="mini-info">
               <div class="mini-info-label">이벤트 상태</div>
@@ -2079,6 +2149,19 @@
         function updateShopButton() {
           const isShop = state.currentEvent?.type === "shop";
           els.shopBtn.classList.toggle("visible", isShop);
+          if (!isShop) {
+            els.shopBtn.textContent = "🧀 구매하기";
+            return;
+          }
+          const event = state.currentEvent;
+          const prices = event.items.map((item) =>
+            Math.max(1, item.cost - event.discount),
+          );
+          const affordable = prices.find(
+            (price) => state.player && state.player.cheese >= price,
+          );
+          const displayPrice = affordable ?? Math.min(...prices);
+          els.shopBtn.textContent = `🧀 구매하기 (${displayPrice}치즈)`;
         }
 
         function renderBuffs() {
@@ -2103,7 +2186,6 @@
           els.charAvatar.textContent = char.emoji;
           els.charName.textContent = char.name;
           els.charTrait.textContent = char.desc;
-          els.sceneText.textContent = `장면 ${state.stage}`;
 
           const totalAtk = state.player.atk + state.player.buffs.atk;
           els.hpText.textContent = `${state.player.hp} / ${state.player.maxHp}`;
@@ -2206,7 +2288,7 @@
           state.running = false;
           stopLoop();
 
-          els.resScene.textContent = state.stage;
+          els.resScore.textContent = state.player.score;
           els.resLevel.textContent = state.player.level;
           els.resCheese.textContent = `${state.player.totalCheeseEarned} 🧀`;
           els.resKills.textContent = state.player.kills;
@@ -2222,6 +2304,19 @@
           els.gameOverOverlay.classList.remove("active");
           els.gameScreen.classList.remove("active");
           els.startScreen.classList.add("active");
+          els.randomBtn.textContent =
+            state.selectedCharacter === "squirrel"
+              ? "랜덤 캐릭터 선택 ✨"
+              : "랜덤 캐릭터 선택";
+          updateCharacterSelectionUI();
+        }
+
+        function handleMenuClick() {
+          const shouldLeave =
+            !state.running ||
+            confirm("메뉴로 나갑니다. 현재 진행 상황은 저장되지 않아요.");
+          if (!shouldLeave) return;
+          resetToStart();
         }
 
         function handleWheel(e) {
@@ -2274,6 +2369,7 @@
 
         els.startBtn.addEventListener("click", startGame);
         els.restartBtn.addEventListener("click", resetToStart);
+        els.menuBtn.addEventListener("click", handleMenuClick);
         els.skipBtn.addEventListener("click", () => goNextScene());
         els.likeBtn.addEventListener("click", likeCurrentEvent);
         els.shopBtn.addEventListener("click", buyFromShop);
@@ -2289,6 +2385,7 @@
         els.app.addEventListener("touchend", handleTouchEnd, { passive: true });
 
         setupCharacterSelection();
+        updateCharacterSelectionUI();
       })();
     </script>
   </body>
