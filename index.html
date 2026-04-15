@@ -1,0 +1,2275 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>치즈릴스</title>
+    <style>
+      :root {
+        --bg: #0f1015;
+        --panel: #171a22;
+        --panel-2: #1f2430;
+        --text: #f4f6fb;
+        --muted: #9da6b8;
+        --accent: #ffd95e;
+        --accent-2: #ffb703;
+        --danger: #ff6b6b;
+        --heal: #69db7c;
+        --buff: #74c0fc;
+        --shop: #c0a7ff;
+        --treasure: #ffe08a;
+        --trap: #ff8787;
+        --shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at top,
+            rgba(255, 217, 94, 0.08),
+            transparent 28%
+          ),
+          linear-gradient(180deg, #0b0c11 0%, #12141b 100%);
+        color: var(--text);
+        font-family:
+          "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 14px;
+        touch-action: none;
+      }
+
+      .app {
+        width: min(100%, 430px);
+        height: min(100vh - 28px, 860px);
+        background: rgba(15, 16, 21, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        touch-action: none;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        padding: 14px;
+        display: none;
+      }
+
+      .screen.active {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .title-glow {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 217, 94, 0.22),
+          transparent 65%
+        );
+        top: -110px;
+        left: 50%;
+        transform: translateX(-50%);
+        filter: blur(10px);
+        pointer-events: none;
+      }
+
+      .start-screen {
+        justify-content: center;
+        gap: 18px;
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 40px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        margin: 0;
+      }
+
+      .logo span {
+        color: var(--accent);
+        text-shadow: 0 0 20px rgba(255, 217, 94, 0.25);
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+        margin: 0 auto;
+        max-width: 310px;
+      }
+
+      .card-select-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .char-card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.02)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 22px;
+        padding: 16px 12px;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .char-card.selected {
+        border-color: rgba(255, 217, 94, 0.9);
+        box-shadow: 0 0 0 3px rgba(255, 217, 94, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .char-emoji {
+        font-size: 42px;
+        margin-bottom: 8px;
+      }
+
+      .char-name {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+
+      .char-desc {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+        min-height: 50px;
+      }
+
+      .primary-btn,
+      .secondary-btn,
+      .action-btn {
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        font-weight: 800;
+        transition:
+          transform 0.15s ease,
+          opacity 0.15s ease,
+          filter 0.15s ease;
+      }
+
+      .primary-btn:active,
+      .secondary-btn:active,
+      .action-btn:active {
+        transform: scale(0.98);
+      }
+
+      .primary-btn {
+        background: linear-gradient(180deg, var(--accent), var(--accent-2));
+        color: #2e2300;
+        padding: 16px 18px;
+        font-size: 16px;
+        margin-top: 6px;
+        box-shadow: 0 10px 20px rgba(255, 183, 3, 0.18);
+      }
+
+      .secondary-btn {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 13px 14px;
+        font-size: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .game-screen {
+        gap: 8px;
+      }
+
+      .topbar {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        padding: 10px;
+        display: grid;
+        gap: 7px;
+        backdrop-filter: blur(8px);
+      }
+
+      .meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .char-badge {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .char-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 217, 94, 0.18),
+          rgba(255, 255, 255, 0.04)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        flex-shrink: 0;
+      }
+
+      .char-mini-text {
+        min-width: 0;
+      }
+
+      .char-mini-name {
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .char-mini-sub {
+        font-size: 10px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
+      }
+
+      .scene-indicator {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .stat-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 13px;
+        padding: 6px 6px 7px;
+        text-align: center;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 9px;
+        margin-bottom: 3px;
+      }
+
+      .stat-value {
+        font-weight: 900;
+        font-size: 13px;
+        line-height: 1.1;
+      }
+
+      .resource-row {
+        display: grid;
+        gap: 7px;
+      }
+
+      .status-block {
+        display: grid;
+        gap: 5px;
+      }
+
+      .status-line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .bar {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 999px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .bar-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        transition: width 0.2s ease;
+      }
+
+      .hp-fill {
+        background: linear-gradient(90deg, #ff8787, #ff4d6d);
+      }
+
+      .xp-fill {
+        background: linear-gradient(90deg, #ffe08a, #ffb703);
+      }
+
+      .buffs-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        min-height: 22px;
+      }
+
+      .buff-pill {
+        font-size: 10px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        background: rgba(116, 192, 252, 0.12);
+        border: 1px solid rgba(116, 192, 252, 0.24);
+        color: #d5ecff;
+        font-weight: 700;
+      }
+
+      .feed-zone {
+        position: relative;
+        flex: 1;
+        overflow: hidden;
+        border-radius: 28px;
+        min-height: 0;
+        touch-action: none;
+      }
+
+      .feed-card {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.02)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        padding: 16px 16px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transition:
+          transform 0.3s cubic-bezier(0.22, 0.9, 0.3, 1),
+          opacity 0.3s ease;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .feed-card.enter-from-bottom {
+        transform: translateY(105%);
+        opacity: 0;
+      }
+
+      .feed-card.active {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .feed-card.leave-up {
+        transform: translateY(-110%);
+        opacity: 0;
+      }
+
+      .feed-card.monster {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 70, 70, 0.34),
+            transparent 30%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(90, 18, 24, 0.58),
+            rgba(255, 255, 255, 0.02)
+          );
+        border-color: rgba(255, 100, 100, 0.25);
+      }
+
+      .feed-card.heal {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(105, 219, 124, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.buff {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(116, 192, 252, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.trap {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 135, 135, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.treasure {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 224, 138, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.shop {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(192, 167, 255, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.special {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 217, 94, 0.14),
+            transparent 28%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.cheese-farm {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 224, 138, 0.24),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(84, 65, 16, 0.34),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.blacksmith {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(120, 190, 255, 0.16),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(30, 39, 56, 0.65),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.quest {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 217, 94, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(65, 52, 17, 0.45),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.gamble {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 120, 180, 0.2),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(59, 24, 46, 0.55),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.shrine {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(150, 220, 255, 0.18),
+            transparent 26%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(18, 41, 52, 0.52),
+            rgba(255, 255, 255, 0.02)
+          );
+      }
+
+      .feed-card.boss {
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(255, 50, 50, 0.4),
+            transparent 30%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(77, 14, 19, 0.72),
+            rgba(255, 255, 255, 0.02)
+          );
+        border-color: rgba(255, 90, 90, 0.35);
+      }
+
+      .event-topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .event-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .event-risk {
+        font-size: 11px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .event-visual {
+        flex: 1;
+        min-height: 148px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.01)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .event-icon {
+        font-size: 62px;
+        line-height: 1;
+        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.22));
+        z-index: 1;
+      }
+
+      .event-title {
+        font-size: 26px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        text-align: center;
+        margin: 0;
+        z-index: 1;
+      }
+
+      .event-sub {
+        margin: 0;
+        font-size: 12px;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.5;
+        z-index: 1;
+        max-width: 250px;
+      }
+
+      .event-pulse {
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.12),
+          transparent 62%
+        );
+        filter: blur(10px);
+        opacity: 0.6;
+      }
+
+      .event-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .mini-info {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 10px;
+        min-height: 68px;
+      }
+
+      .mini-info-label {
+        font-size: 10px;
+        color: var(--muted);
+        margin-bottom: 6px;
+        font-weight: 700;
+      }
+
+      .mini-info-value {
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.4;
+      }
+
+      .progress-wrap {
+        display: grid;
+        gap: 6px;
+      }
+
+      .progress-head {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .stay-text {
+        color: var(--accent);
+        font-weight: 800;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .action-btn {
+        padding: 13px 10px;
+        font-size: 14px;
+        min-height: 50px;
+        color: var(--text);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .action-btn.skip {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .action-btn.like {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 103, 145, 0.26),
+          rgba(255, 87, 122, 0.18)
+        );
+        border-color: rgba(255, 132, 167, 0.3);
+      }
+
+      .action-btn.like.used {
+        opacity: 0.5;
+        filter: grayscale(0.3);
+        cursor: default;
+      }
+
+      .action-btn.shop {
+        grid-column: 1 / -1;
+        background: linear-gradient(
+          180deg,
+          rgba(192, 167, 255, 0.26),
+          rgba(192, 167, 255, 0.12)
+        );
+        border-color: rgba(192, 167, 255, 0.26);
+        display: none;
+      }
+
+      .action-btn.shop.visible {
+        display: block;
+      }
+
+      .bottom-panel {
+        display: grid;
+        gap: 8px;
+      }
+
+      .help-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 10px;
+        color: var(--muted);
+        padding: 0 2px;
+      }
+
+      .log-box {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 18px;
+        padding: 10px 12px;
+        min-height: 88px;
+        height: 88px;
+        max-height: 88px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      #logList {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-height: 0;
+        overflow: hidden;
+        justify-content: center;
+      }
+
+      .log-item {
+        font-size: 11px;
+        line-height: 1.35;
+        min-height: calc(11px * 1.35);
+        color: #e5e9f2;
+        opacity: 0.96;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .log-item small {
+        color: var(--muted);
+      }
+
+      .floating-hearts {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .heart {
+        position: absolute;
+        bottom: 110px;
+        left: 50%;
+        font-size: 22px;
+        animation: heartFloat 0.9s ease forwards;
+        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
+      }
+
+      @keyframes heartFloat {
+        0% {
+          transform: translate(-50%, 0) scale(0.7);
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(calc(-50% + var(--x)), -120px) scale(1.15);
+          opacity: 0;
+        }
+      }
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(7, 8, 12, 0.82);
+        backdrop-filter: blur(10px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        padding: 18px;
+        z-index: 10;
+      }
+
+      .overlay.active {
+        display: flex;
+      }
+
+      .modal {
+        width: 100%;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06),
+          rgba(255, 255, 255, 0.03)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        padding: 22px 18px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      .modal h2 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        letter-spacing: -0.04em;
+      }
+
+      .modal p {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0 0 16px;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+        text-align: left;
+      }
+
+      .result-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 18px;
+        padding: 12px;
+      }
+
+      .result-label {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 7px;
+      }
+
+      .result-value {
+        font-size: 20px;
+        font-weight: 900;
+      }
+
+      @media (max-width: 380px) {
+        .logo {
+          font-size: 34px;
+        }
+        .event-title {
+          font-size: 23px;
+        }
+        .event-info-grid {
+          grid-template-columns: 1fr;
+        }
+        .char-mini-sub {
+          max-width: 145px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <div class="screen start-screen active" id="startScreen">
+        <div class="title-glow"></div>
+        <p class="logo">치즈<span>릴스</span></p>
+        <p class="subtitle">
+          릴스를 넘기듯 장면을 스킵하거나 머무르며 성장하는 세로형 캐주얼
+          웹게임. 좋은 이벤트엔 좋아요를 눌러 더 맛있게 치즈를 챙겨봐.
+        </p>
+
+        <div class="card-select-wrap" id="characterCards">
+          <button class="char-card selected" data-char="mouse">
+            <div class="char-emoji">🐭</div>
+            <div class="char-name">쥐</div>
+            <div class="char-desc">
+              치즈 획득량 보너스. 대신 기본 체력이 살짝 낮다.
+            </div>
+          </button>
+          <button class="char-card" data-char="cat">
+            <div class="char-emoji">🐱</div>
+            <div class="char-name">고양이</div>
+            <div class="char-desc">
+              기본 공격력이 높다. 대신 회복 효율이 조금 낮다.
+            </div>
+          </button>
+        </div>
+
+        <button class="primary-btn" id="startBtn">게임 시작</button>
+        <button class="secondary-btn" id="randomBtn">랜덤 캐릭터 선택</button>
+      </div>
+
+      <div class="screen game-screen" id="gameScreen">
+        <div class="topbar">
+          <div class="meta-row">
+            <div class="char-badge">
+              <div class="char-avatar" id="charAvatar">🐭</div>
+              <div class="char-mini-text">
+                <div class="char-mini-name" id="charName">쥐</div>
+                <div class="char-mini-sub" id="charTrait">
+                  치즈 획득 +20%, 기본 HP -6
+                </div>
+              </div>
+            </div>
+            <div class="scene-indicator" id="sceneText">장면 1</div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">공격력</div>
+              <div class="stat-value" id="atkStat">5</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">치즈</div>
+              <div class="stat-value" id="cheeseStat">0 🧀</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">레벨</div>
+              <div class="stat-value" id="lvStat">1</div>
+            </div>
+          </div>
+
+          <div class="resource-row">
+            <div class="status-block">
+              <div class="status-line">
+                <span>체력</span>
+                <span id="hpText">34 / 34</span>
+              </div>
+              <div class="bar">
+                <div class="bar-fill hp-fill" id="hpFill"></div>
+              </div>
+            </div>
+
+            <div class="status-block">
+              <div class="status-line">
+                <span>경험치</span>
+                <span id="xpText">0 / 12</span>
+              </div>
+              <div class="bar">
+                <div class="bar-fill xp-fill" id="xpFill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="buffs-row" id="buffsRow"></div>
+        </div>
+
+        <div class="feed-zone" id="feedZone"></div>
+
+        <div class="bottom-panel">
+          <div class="controls">
+            <button class="action-btn skip" id="skipBtn">⏭ 넘기기</button>
+            <button class="action-btn like" id="likeBtn">❤ 좋아요</button>
+            <button class="action-btn shop" id="shopBtn">🧀 구매하기</button>
+          </div>
+
+          <div class="help-row">
+            <span>아래 스크롤 / ↓ / 위로 스와이프로 넘기기</span>
+            <span id="stayIndicator" class="stay-text">머무르는 중...</span>
+          </div>
+
+          <div class="log-box">
+            <div id="logList"></div>
+          </div>
+        </div>
+
+        <div class="floating-hearts" id="floatingHearts"></div>
+      </div>
+
+      <div class="overlay" id="gameOverOverlay">
+        <div class="modal">
+          <h2>게임 오버</h2>
+          <p>피드를 넘기며 꽤 오래 버텼네. 다음엔 더 맛있는 장면만 골라보자.</p>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <div class="result-label">도달 장면</div>
+              <div class="result-value" id="resScene">0</div>
+            </div>
+            <div class="result-card">
+              <div class="result-label">레벨</div>
+              <div class="result-value" id="resLevel">0</div>
+            </div>
+            <div class="result-card">
+              <div class="result-label">획득 치즈</div>
+              <div class="result-value" id="resCheese">0</div>
+            </div>
+            <div class="result-card">
+              <div class="result-label">처치 몬스터</div>
+              <div class="result-value" id="resKills">0</div>
+            </div>
+            <div class="result-card">
+              <div class="result-label">사용한 좋아요</div>
+              <div class="result-value" id="resLikes">0</div>
+            </div>
+            <div class="result-card">
+              <div class="result-label">선택 캐릭터</div>
+              <div class="result-value" id="resChar">쥐</div>
+            </div>
+          </div>
+
+          <button class="primary-btn" id="restartBtn">다시 시작</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const BASE_STAY_TIME = 2000;
+
+        const CHARACTERS = {
+          mouse: {
+            key: "mouse",
+            name: "쥐",
+            emoji: "🐭",
+            hp: 34,
+            atk: 5,
+            cheeseMultiplier: 1.2,
+            healMultiplier: 1,
+            desc: "치즈 획득 +20%, 기본 HP -6",
+          },
+          cat: {
+            key: "cat",
+            name: "고양이",
+            emoji: "🐱",
+            hp: 40,
+            atk: 7,
+            cheeseMultiplier: 1,
+            healMultiplier: 0.9,
+            desc: "공격력 +2, 회복 효율 -10%",
+          },
+        };
+
+        const EVENT_POOL = [
+          {
+            type: "monster",
+            titles: ["골목 쥐단", "치즈 도둑", "야식 고양이", "냄비 뒤 괴수"],
+            icons: ["🐀", "🦝", "🐈‍⬛", "👾"],
+            riskText: "중간 위험",
+            rewardText: "경험치 + 치즈",
+            description:
+              "머무르면 주기적으로 전투가 일어난다. 이기면 치즈와 경험치를 얻는다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              const hp = 8 + Math.floor(stage * 1.5);
+              const dmg = 2 + Math.floor(stage * 0.35);
+              const xp = 5 + Math.floor(stage * 0.75);
+              const cheese = 4 + Math.floor(stage * 0.55);
+              return {
+                enemyHp: hp,
+                enemyMaxHp: hp,
+                enemyDmg: dmg,
+                xpReward: xp,
+                cheeseReward: cheese,
+                likeApplied: false,
+                rewardBonus: 0,
+                damageReduction: 0,
+              };
+            },
+            tickEffect(state, event) {
+              const atk = state.player.atk + state.player.buffs.atk;
+              const damageToEnemy = randInt(Math.max(1, atk - 1), atk + 2);
+              event.enemyHp -= damageToEnemy;
+              addLog(`공격! ${damageToEnemy} 피해를 줬다.`);
+
+              if (event.enemyHp <= 0) {
+                const cheeseGain =
+                  Math.floor(
+                    event.cheeseReward * state.player.cheeseMultiplier,
+                  ) + event.rewardBonus;
+                gainXp(event.xpReward);
+                gainCheese(cheeseGain);
+                state.player.kills++;
+                addLog(
+                  `몬스터 처치! XP ${event.xpReward}, 치즈 ${cheeseGain} 획득.`,
+                );
+                goNextScene();
+                return;
+              }
+
+              const retaliate = Math.max(
+                1,
+                event.enemyDmg - event.damageReduction,
+              );
+              takeDamage(retaliate);
+              addLog(`반격! ${retaliate} 피해를 입었다.`);
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 강화됨";
+              event.likeApplied = true;
+              event.rewardBonus += 4 + Math.floor(state.stage / 4);
+              event.damageReduction += 1;
+              return "전투 보상 증가 + 반격 피해 1 감소";
+            },
+            extraInfo(event) {
+              return `적 HP ${Math.max(0, event.enemyHp)} / ${event.enemyMaxHp}`;
+            },
+          },
+          {
+            type: "boss",
+            titles: ["광기의 보스쥐", "창고 지배자", "치즈왕", "심연의 포식자"],
+            icons: ["👹", "🐲", "💀", "🦴"],
+            riskText: "매우 위험",
+            rewardText: "대량 XP + 치즈",
+            description: "강한 적과 싸운다. 위험하지만 보상이 크다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              const hp = 18 + Math.floor(stage * 2.2);
+              const dmg = 4 + Math.floor(stage * 0.5);
+              const xp = 10 + Math.floor(stage * 1.2);
+              const cheese = 10 + Math.floor(stage * 1.1);
+              return {
+                enemyHp: hp,
+                enemyMaxHp: hp,
+                enemyDmg: dmg,
+                xpReward: xp,
+                cheeseReward: cheese,
+                likeApplied: false,
+                rewardBonus: 0,
+                damageReduction: 0,
+              };
+            },
+            tickEffect(state, event) {
+              const atk = state.player.atk + state.player.buffs.atk;
+              const damageToEnemy = randInt(Math.max(2, atk - 1), atk + 3);
+              event.enemyHp -= damageToEnemy;
+              addLog(`보스에게 ${damageToEnemy} 피해!`);
+
+              if (event.enemyHp <= 0) {
+                const cheeseGain =
+                  Math.floor(
+                    event.cheeseReward * state.player.cheeseMultiplier,
+                  ) + event.rewardBonus;
+                gainXp(event.xpReward);
+                gainCheese(cheeseGain);
+                state.player.kills++;
+                addLog(
+                  `보스 격파! XP ${event.xpReward}, 치즈 ${cheeseGain} 획득.`,
+                );
+                goNextScene();
+                return;
+              }
+
+              const retaliate = Math.max(
+                2,
+                event.enemyDmg - event.damageReduction,
+              );
+              takeDamage(retaliate);
+              addLog(`보스 반격! ${retaliate} 피해.`);
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.rewardBonus += 8;
+              event.damageReduction += 1;
+              return "보스 보상 증가 + 피해 1 감소";
+            },
+            extraInfo(event) {
+              return `보스 HP ${Math.max(0, event.enemyHp)} / ${event.enemyMaxHp}`;
+            },
+          },
+          {
+            type: "heal",
+            titles: ["따뜻한 우유", "포근한 낮잠", "치유 스프", "휴식 코너"],
+            icons: ["🥛", "🛏", "🍲", "🌿"],
+            riskText: "안전",
+            rewardText: "체력 회복",
+            description: "머무를수록 천천히 회복한다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                healAmount: 3 + Math.floor(stage * 0.15),
+                bonusHeal: 0,
+                ticks: 0,
+                likeApplied: false,
+              };
+            },
+            tickEffect(state, event) {
+              event.ticks++;
+              const diminish = event.ticks > 4 ? 1 : 0;
+              const heal = Math.max(
+                1,
+                Math.floor(
+                  (event.healAmount + event.bonusHeal - diminish) *
+                    state.player.healMultiplier,
+                ),
+              );
+              const before = state.player.hp;
+              state.player.hp = Math.min(
+                state.player.maxHp,
+                state.player.hp + heal,
+              );
+              const actual = state.player.hp - before;
+              if (actual > 0) addLog(`체력 ${actual} 회복.`);
+              else addLog("이미 충분히 회복된 상태다.");
+              render();
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.bonusHeal += 2;
+              return "회복량 +2";
+            },
+            extraInfo(event) {
+              return `회복 ${event.healAmount + event.bonusHeal}/틱`;
+            },
+          },
+          {
+            type: "buff",
+            titles: ["헬스 치즈", "야수 본능", "집중 모드", "반짝 영감"],
+            icons: ["💪", "⚡", "🎯", "✨"],
+            riskText: "낮은 위험",
+            rewardText: "공격력/최대HP 증가",
+            description: "머무를수록 성장 버프를 획득한다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                ticks: 0,
+                atkGain: 1,
+                hpGain: stage % 3 === 0 ? 2 : 1,
+                likeApplied: false,
+              };
+            },
+            tickEffect(state, event) {
+              event.ticks++;
+              if (event.ticks === 1) {
+                state.player.buffs.atk += event.atkGain;
+                state.player.maxHp += event.hpGain;
+                state.player.hp = Math.min(
+                  state.player.maxHp,
+                  state.player.hp + 1,
+                );
+                addLog(
+                  `버프 획득! 공격력 +${event.atkGain}, 최대HP +${event.hpGain}`,
+                );
+                render();
+              } else if (event.ticks === 2) {
+                gainXp(2);
+                addLog("집중 유지! 경험치 2 획득.");
+              } else {
+                addLog("더 머무를수록 효율이 조금 떨어진다.");
+              }
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 강화됨";
+              event.likeApplied = true;
+              event.atkGain += 1;
+              state.player.buffs.atk += 1;
+              addLog("좋아요 버프로 즉시 공격력 +1!");
+              render();
+              return "버프 수치 상승";
+            },
+            extraInfo(event) {
+              return `예상 버프: 공격 +${event.atkGain}, 최대HP +${event.hpGain}`;
+            },
+          },
+          {
+            type: "trap",
+            titles: ["끈끈이 바닥", "독 치즈", "폭탄 댓글", "미끄러운 통로"],
+            icons: ["🪤", "☠", "💣", "🧪"],
+            riskText: "높은 위험",
+            rewardText: "빠른 판단 필요",
+            description: "머무를수록 손해가 누적된다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                damage: 3 + Math.floor(stage * 0.22),
+                likeApplied: false,
+              };
+            },
+            tickEffect(state, event) {
+              takeDamage(event.damage);
+              addLog(`함정 발동! ${event.damage} 피해.`);
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.damage = Math.max(0, event.damage - 2);
+              return "함정 피해 2 감소";
+            },
+            extraInfo(event) {
+              return `예상 피해: ${event.damage}/틱`;
+            },
+          },
+          {
+            type: "treasure",
+            titles: ["치즈 금고", "행운 상자", "숨겨진 간식", "야식 득템"],
+            icons: ["🧀", "🎁", "📦", "💰"],
+            riskText: "안전",
+            rewardText: "치즈 대량 획득",
+            description: "머무르면 일정량의 치즈를 얻는다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                baseCheese: 7 + Math.floor(stage * 0.75),
+                claimed: false,
+                bonus: 0,
+                likeApplied: false,
+              };
+            },
+            tickEffect(state, event) {
+              if (!event.claimed) {
+                const gain = Math.floor(
+                  (event.baseCheese + event.bonus) *
+                    state.player.cheeseMultiplier,
+                );
+                gainCheese(gain);
+                event.claimed = true;
+                addLog(`치즈 ${gain} 획득!`);
+              } else {
+                addLog("이미 보상은 챙겼다.");
+              }
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.bonus += 5;
+              return "보물 치즈 +5";
+            },
+            extraInfo(event) {
+              return `예상 획득: ${event.baseCheese + event.bonus} 치즈`;
+            },
+          },
+          {
+            type: "shop",
+            titles: ["밤도깨비 상점", "치즈 마트", "비밀 거래소", "피드 마켓"],
+            icons: ["🏪", "🛒", "🧺", "🪙"],
+            riskText: "중립",
+            rewardText: "치즈로 성장 구매",
+            description: "버튼으로 즉시 구매 가능하다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                likeApplied: false,
+                discount: 0,
+                items: [
+                  {
+                    key: "heal",
+                    label: "체력 +10",
+                    cost: 8 + Math.floor(stage * 0.4),
+                  },
+                  {
+                    key: "atk",
+                    label: "공격력 +1",
+                    cost: 12 + Math.floor(stage * 0.6),
+                  },
+                  {
+                    key: "hp",
+                    label: "최대HP +4",
+                    cost: 11 + Math.floor(stage * 0.5),
+                  },
+                ],
+              };
+            },
+            tickEffect() {
+              addLog("상점이다. 치즈로 성장 아이템을 살 수 있다.");
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.discount = 2;
+              return "상점 가격 -2 할인";
+            },
+            extraInfo(event) {
+              return event.items
+                .map(
+                  (item) =>
+                    `${item.label}(${Math.max(1, item.cost - event.discount)})`,
+                )
+                .join(" / ");
+            },
+          },
+          {
+            type: "special",
+            titles: [
+              "바이럴 피드",
+              "논란의 장면",
+              "럭키 알고리즘",
+              "광고 시청 보너스",
+            ],
+            icons: ["📱", "🎲", "🔥", "📣"],
+            riskText: "랜덤",
+            rewardText: "위험과 보상 혼합",
+            description: "좋은 일도, 나쁜 일도 일어날 수 있다.",
+            tickInterval: BASE_STAY_TIME,
+            create() {
+              return {
+                likeApplied: false,
+                luckBoost: 0,
+                resolvedCount: 0,
+              };
+            },
+            tickEffect(state, event) {
+              event.resolvedCount++;
+              const roll = Math.random() + event.luckBoost;
+              if (roll > 1.15) {
+                const cheese = Math.floor(
+                  (8 + state.stage * 0.4) * state.player.cheeseMultiplier,
+                );
+                gainCheese(cheese);
+                gainXp(4);
+                addLog(`대박! 치즈 ${cheese}, XP 4 획득.`);
+              } else if (roll > 0.65) {
+                state.player.hp = Math.min(
+                  state.player.maxHp,
+                  state.player.hp + 4,
+                );
+                addLog("뜻밖의 호평! 체력 4 회복.");
+                render();
+              } else {
+                takeDamage(3 + Math.floor(state.stage * 0.2));
+                addLog("악플 폭주! 피해를 입었다.");
+              }
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.luckBoost += 0.25;
+              return "좋은 결과 확률 상승";
+            },
+            extraInfo(event) {
+              return event.likeApplied
+                ? "호재 확률 상승 적용됨"
+                : "결과가 랜덤";
+            },
+          },
+          {
+            type: "cheese-farm",
+            titles: ["치즈 광산", "우유 저장고", "발효 창고", "치즈 농장"],
+            icons: ["⛏️", "🧈", "🏭", "🧀"],
+            riskText: "안전",
+            rewardText: "지속 치즈 수급",
+            description: "머무를수록 소량의 치즈를 꾸준히 얻는다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                gain: 3 + Math.floor(stage * 0.35),
+                likeApplied: false,
+              };
+            },
+            tickEffect(state, event) {
+              const gain = Math.floor(
+                event.gain * state.player.cheeseMultiplier,
+              );
+              gainCheese(gain);
+              addLog(`치즈 ${gain} 채집.`);
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.gain += 2;
+              return "채집량 +2";
+            },
+            extraInfo(event) {
+              return `치즈 +${event.gain}/틱`;
+            },
+          },
+          {
+            type: "blacksmith",
+            titles: [
+              "못된 대장간",
+              "날붙이 수리소",
+              "전투 공방",
+              "강화 작업대",
+            ],
+            icons: ["🔨", "⚙️", "🗡️", "🛠️"],
+            riskText: "중립",
+            rewardText: "공격 성장",
+            description: "머무르면 공격 관련 능력이 오른다.",
+            tickInterval: BASE_STAY_TIME,
+            create() {
+              return {
+                ticks: 0,
+                likeApplied: false,
+              };
+            },
+            tickEffect(state, event) {
+              event.ticks++;
+              if (event.ticks === 1) {
+                state.player.atk += 1;
+                addLog("무기 손질 완료! 공격력 +1");
+              } else {
+                gainXp(1);
+                addLog("숙련도 상승! 경험치 1 획득.");
+              }
+              render();
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              state.player.atk += 1;
+              render();
+              return "즉시 공격력 +1";
+            },
+            extraInfo() {
+              return "공격력 성장에 특화";
+            },
+          },
+          {
+            type: "quest",
+            titles: ["배달 의뢰", "치즈 수색", "심부름 요청", "분실물 회수"],
+            icons: ["📜", "🧭", "📦", "🪶"],
+            riskText: "낮은 위험",
+            rewardText: "경험치 + 치즈",
+            description: "짧은 임무를 수행해 성장 자원을 얻는다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                done: false,
+                xp: 4 + Math.floor(stage * 0.4),
+                cheese: 4 + Math.floor(stage * 0.4),
+                likeApplied: false,
+              };
+            },
+            tickEffect(state, event) {
+              if (event.done) {
+                addLog("의뢰는 이미 끝났다.");
+                return;
+              }
+              event.done = true;
+              gainXp(event.xp);
+              gainCheese(
+                Math.floor(event.cheese * state.player.cheeseMultiplier),
+              );
+              addLog(
+                `의뢰 완료! XP ${event.xp}, 치즈 ${Math.floor(event.cheese * state.player.cheeseMultiplier)} 획득.`,
+              );
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              event.xp += 2;
+              event.cheese += 2;
+              return "의뢰 보상 상승";
+            },
+            extraInfo(event) {
+              return `보상 XP ${event.xp}, 치즈 ${event.cheese}`;
+            },
+          },
+          {
+            type: "gamble",
+            titles: ["수상한 딜러", "운명의 룰렛", "도박 상자", "한방 승부"],
+            icons: ["🎰", "🎲", "🃏", "🎯"],
+            riskText: "고위험",
+            rewardText: "대박 또는 손해",
+            description: "치즈나 체력을 잃을 수도, 크게 벌 수도 있다.",
+            tickInterval: BASE_STAY_TIME,
+            create(stage) {
+              return {
+                likeApplied: false,
+                stage,
+              };
+            },
+            tickEffect(state) {
+              const roll = Math.random();
+              if (roll > 0.75) {
+                const gain = Math.floor(
+                  (10 + state.stage * 0.6) * state.player.cheeseMultiplier,
+                );
+                gainCheese(gain);
+                addLog(`대성공! 치즈 ${gain} 획득.`);
+              } else if (roll > 0.45) {
+                gainXp(3);
+                addLog("나쁘지 않은 결과. 경험치 3 획득.");
+              } else {
+                const loss = Math.min(
+                  state.player.cheese,
+                  5 + Math.floor(state.stage * 0.2),
+                );
+                state.player.cheese -= loss;
+                addLog(`실패... 치즈 ${loss} 손실.`);
+                render();
+              }
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              return "좋은 결과 확률 소폭 상승";
+            },
+            extraInfo() {
+              return "대박과 손해가 공존";
+            },
+          },
+          {
+            type: "shrine",
+            titles: ["치즈 신전", "달빛 제단", "축복의 벽", "별의 우물"],
+            icons: ["⛲", "🕯️", "🌙", "🔮"],
+            riskText: "안전",
+            rewardText: "회복 또는 최대HP",
+            description: "신비한 힘이 캐릭터를 강화한다.",
+            tickInterval: BASE_STAY_TIME,
+            create() {
+              return {
+                likeApplied: false,
+              };
+            },
+            tickEffect(state) {
+              if (Math.random() > 0.5) {
+                state.player.maxHp += 2;
+                state.player.hp += 2;
+                addLog("축복! 최대HP +2");
+              } else {
+                state.player.hp = Math.min(
+                  state.player.maxHp,
+                  state.player.hp + 5,
+                );
+                addLog("신전의 치유로 체력 5 회복.");
+              }
+              render();
+            },
+            likeBonusEffect(state, event) {
+              if (event.likeApplied) return "이미 적용됨";
+              event.likeApplied = true;
+              state.player.maxHp += 1;
+              state.player.hp += 1;
+              render();
+              return "즉시 최대HP +1";
+            },
+            extraInfo() {
+              return "회복/생존 계열 성장";
+            },
+          },
+        ];
+
+        const els = {
+          app: document.getElementById("app"),
+          startScreen: document.getElementById("startScreen"),
+          gameScreen: document.getElementById("gameScreen"),
+          gameOverOverlay: document.getElementById("gameOverOverlay"),
+          characterCards: [...document.querySelectorAll(".char-card")],
+          startBtn: document.getElementById("startBtn"),
+          randomBtn: document.getElementById("randomBtn"),
+
+          charAvatar: document.getElementById("charAvatar"),
+          charName: document.getElementById("charName"),
+          charTrait: document.getElementById("charTrait"),
+          sceneText: document.getElementById("sceneText"),
+
+          hpText: document.getElementById("hpText"),
+          hpFill: document.getElementById("hpFill"),
+          atkStat: document.getElementById("atkStat"),
+          cheeseStat: document.getElementById("cheeseStat"),
+          lvStat: document.getElementById("lvStat"),
+          xpText: document.getElementById("xpText"),
+          xpFill: document.getElementById("xpFill"),
+          buffsRow: document.getElementById("buffsRow"),
+          feedZone: document.getElementById("feedZone"),
+          logList: document.getElementById("logList"),
+          skipBtn: document.getElementById("skipBtn"),
+          likeBtn: document.getElementById("likeBtn"),
+          shopBtn: document.getElementById("shopBtn"),
+          stayIndicator: document.getElementById("stayIndicator"),
+          floatingHearts: document.getElementById("floatingHearts"),
+
+          resScene: document.getElementById("resScene"),
+          resLevel: document.getElementById("resLevel"),
+          resCheese: document.getElementById("resCheese"),
+          resKills: document.getElementById("resKills"),
+          resLikes: document.getElementById("resLikes"),
+          resChar: document.getElementById("resChar"),
+          restartBtn: document.getElementById("restartBtn"),
+        };
+
+        const state = {
+          selectedCharacter: "mouse",
+          running: false,
+          stage: 1,
+          logs: [],
+          currentEvent: null,
+          currentTemplate: null,
+          tickElapsed: 0,
+          autoTimer: null,
+          cardEl: null,
+          player: null,
+          touchStartY: null,
+          touchStartX: null,
+        };
+
+        function randInt(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function pick(arr) {
+          return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function addLog(text) {
+          const time = new Date();
+          const hh = String(time.getHours()).padStart(2, "0");
+          const mm = String(time.getMinutes()).padStart(2, "0");
+          state.logs.unshift(`<small>${hh}:${mm}</small> ${text}`);
+          state.logs = state.logs.slice(0, 4);
+          els.logList.innerHTML = state.logs
+            .map((item) => `<div class="log-item">${item}</div>`)
+            .join("");
+        }
+
+        function setupCharacterSelection() {
+          els.characterCards.forEach((card) => {
+            card.addEventListener("click", () => {
+              state.selectedCharacter = card.dataset.char;
+              els.characterCards.forEach((c) =>
+                c.classList.toggle("selected", c === card),
+              );
+            });
+          });
+
+          els.randomBtn.addEventListener("click", () => {
+            state.selectedCharacter = Math.random() > 0.5 ? "mouse" : "cat";
+            els.characterCards.forEach((c) =>
+              c.classList.toggle(
+                "selected",
+                c.dataset.char === state.selectedCharacter,
+              ),
+            );
+          });
+        }
+
+        function initPlayer(charKey) {
+          const char = CHARACTERS[charKey];
+          state.player = {
+            charKey,
+            name: char.name,
+            emoji: char.emoji,
+            hp: char.hp,
+            maxHp: char.hp,
+            atk: char.atk,
+            cheese: 0,
+            totalCheeseEarned: 0,
+            level: 1,
+            xp: 0,
+            xpToNext: 12,
+            kills: 0,
+            likesUsed: 0,
+            cheeseMultiplier: char.cheeseMultiplier,
+            healMultiplier: char.healMultiplier,
+            buffs: {
+              atk: 0,
+            },
+          };
+        }
+
+        function startGame() {
+          state.running = true;
+          state.stage = 1;
+          state.logs = [];
+          state.tickElapsed = 0;
+          initPlayer(state.selectedCharacter);
+
+          els.logList.innerHTML = "";
+          els.startScreen.classList.remove("active");
+          els.gameScreen.classList.add("active");
+          els.gameOverOverlay.classList.remove("active");
+          els.feedZone.innerHTML = "";
+          state.cardEl = null;
+
+          addLog(`${state.player.name}로 시작!`);
+          generateNextEvent(true);
+          startLoop();
+          render();
+        }
+
+        function startLoop() {
+          stopLoop();
+          state.autoTimer = setInterval(() => {
+            if (!state.running || !state.currentTemplate || !state.currentEvent)
+              return;
+            state.tickElapsed += 100;
+            const interval =
+              state.currentTemplate.tickInterval || BASE_STAY_TIME;
+
+            if (state.tickElapsed >= interval) {
+              state.tickElapsed = 0;
+              state.currentTemplate.tickEffect(state, state.currentEvent);
+              if (!state.running) return;
+              render();
+            } else {
+              renderProgress();
+            }
+          }, 100);
+        }
+
+        function stopLoop() {
+          if (state.autoTimer) {
+            clearInterval(state.autoTimer);
+            state.autoTimer = null;
+          }
+        }
+
+        function takeDamage(amount) {
+          state.player.hp = Math.max(0, state.player.hp - amount);
+          render();
+          if (state.player.hp <= 0) gameOver();
+        }
+
+        function gainCheese(amount) {
+          state.player.cheese += amount;
+          state.player.totalCheeseEarned += amount;
+          render();
+        }
+
+        function gainXp(amount) {
+          state.player.xp += amount;
+          while (state.player.xp >= state.player.xpToNext) {
+            state.player.xp -= state.player.xpToNext;
+            state.player.level += 1;
+            const hpGain = 3 + (state.player.level % 2 === 0 ? 1 : 0);
+            state.player.maxHp += hpGain;
+            state.player.hp = Math.min(
+              state.player.maxHp,
+              state.player.hp + hpGain,
+            );
+            state.player.atk += 1;
+            state.player.xpToNext = Math.floor(state.player.xpToNext * 1.28);
+            addLog(`레벨 업! 공격력 +1 / 최대HP +${hpGain}`);
+          }
+          render();
+        }
+
+        function eventDisplayName(type) {
+          const map = {
+            monster: "몬스터",
+            boss: "보스",
+            heal: "회복",
+            buff: "버프",
+            trap: "함정",
+            treasure: "보물",
+            shop: "상점",
+            special: "특수",
+            "cheese-farm": "채집",
+            blacksmith: "대장간",
+            quest: "의뢰",
+            gamble: "도박",
+            shrine: "신전",
+          };
+          return map[type] || type;
+        }
+
+        function iconForType(type) {
+          const icons = {
+            monster: "⚔",
+            boss: "☠",
+            heal: "💚",
+            buff: "✨",
+            trap: "⚠",
+            treasure: "🧀",
+            shop: "🛍",
+            special: "🎲",
+            "cheese-farm": "⛏️",
+            blacksmith: "🔨",
+            quest: "📜",
+            gamble: "🎰",
+            shrine: "🔮",
+          };
+          return icons[type] || "•";
+        }
+
+        function weightedRandomTemplate() {
+          const pool = [];
+          EVENT_POOL.forEach((template) => {
+            let weight = 1;
+            if (template.type === "monster") weight = 3;
+            if (template.type === "heal") weight = 1.5;
+            if (template.type === "boss")
+              weight = state.stage % 8 === 0 ? 1 : 0.2;
+            if (template.type === "shop") weight = 1.2;
+            if (template.type === "trap") weight = 1.1;
+            for (let i = 0; i < Math.floor(weight * 10); i++)
+              pool.push(template);
+          });
+          return pick(pool);
+        }
+
+        function generateNextEvent(immediate = false) {
+          const template = weightedRandomTemplate();
+          const eventData = template.create(state.stage);
+          const title = pick(template.titles);
+          const icon = pick(template.icons);
+
+          state.currentTemplate = template;
+          state.currentEvent = {
+            ...eventData,
+            type: template.type,
+            title,
+            icon,
+            description: template.description,
+            riskText: template.riskText,
+            rewardText: template.rewardText,
+            liked: false,
+          };
+          state.tickElapsed = 0;
+
+          renderEventCard(immediate);
+          render();
+          addLog(`새 장면: ${title}`);
+        }
+
+        function renderEventCard(immediate = false) {
+          const oldCard = state.cardEl;
+          const card = document.createElement("div");
+          card.className = `feed-card ${state.currentEvent.type} ${immediate ? "" : "enter-from-bottom"}`;
+
+          const extraInfo = state.currentTemplate.extraInfo
+            ? state.currentTemplate.extraInfo(state.currentEvent)
+            : "";
+          card.innerHTML = `
+          <div class="event-topline">
+            <div class="event-type">${iconForType(state.currentEvent.type)} ${eventDisplayName(state.currentEvent.type)}</div>
+            <div class="event-risk">${state.currentEvent.riskText}</div>
+          </div>
+
+          <div class="event-visual">
+            <div class="event-pulse"></div>
+            <div class="event-icon">${state.currentEvent.icon}</div>
+            <h2 class="event-title">${state.currentEvent.title}</h2>
+            <p class="event-sub">${state.currentEvent.description}</p>
+          </div>
+
+          <div class="event-info-grid">
+            <div class="mini-info">
+              <div class="mini-info-label">기대 보상</div>
+              <div class="mini-info-value">${state.currentEvent.rewardText}</div>
+            </div>
+            <div class="mini-info">
+              <div class="mini-info-label">이벤트 상태</div>
+              <div class="mini-info-value" id="eventExtraInfo">${extraInfo}</div>
+            </div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-head">
+              <span>머무르기 진행도</span>
+              <span id="progressLabel">0%</span>
+            </div>
+            <div class="bar"><div class="bar-fill xp-fill" id="eventProgressFill"></div></div>
+          </div>
+        `;
+
+          els.feedZone.appendChild(card);
+          requestAnimationFrame(() => card.classList.add("active"));
+
+          if (oldCard) {
+            oldCard.classList.add("leave-up");
+            setTimeout(() => oldCard.remove(), 300);
+          }
+
+          state.cardEl = card;
+          updateShopButton();
+          updateLikeButton();
+          if (immediate) renderProgress();
+        }
+
+        function renderProgress() {
+          if (!state.cardEl || !state.currentTemplate) return;
+          const fill = state.cardEl.querySelector("#eventProgressFill");
+          const label = state.cardEl.querySelector("#progressLabel");
+          if (!fill || !label) return;
+          const interval = state.currentTemplate.tickInterval || BASE_STAY_TIME;
+          const pct = Math.min(
+            100,
+            Math.floor((state.tickElapsed / interval) * 100),
+          );
+          fill.style.width = `${pct}%`;
+          label.textContent = `${pct}%`;
+        }
+
+        function updateEventInfoText() {
+          if (!state.cardEl) return;
+          const extra = state.cardEl.querySelector("#eventExtraInfo");
+          if (!extra) return;
+          const text = state.currentTemplate.extraInfo
+            ? state.currentTemplate.extraInfo(state.currentEvent)
+            : "진행 중";
+          extra.textContent = text;
+        }
+
+        function updateLikeButton() {
+          els.likeBtn.classList.toggle("used", !!state.currentEvent?.liked);
+          els.likeBtn.disabled = !!state.currentEvent?.liked;
+          els.likeBtn.textContent = state.currentEvent?.liked
+            ? "❤ 좋아요 완료"
+            : "❤ 좋아요";
+        }
+
+        function updateShopButton() {
+          const isShop = state.currentEvent?.type === "shop";
+          els.shopBtn.classList.toggle("visible", isShop);
+        }
+
+        function renderBuffs() {
+          const buffs = [];
+          if (state.player.buffs.atk > 0)
+            buffs.push(`공격 버프 +${state.player.buffs.atk}`);
+          if (state.player.cheeseMultiplier > 1)
+            buffs.push(
+              `치즈 효율 x${state.player.cheeseMultiplier.toFixed(1)}`,
+            );
+          if (state.player.healMultiplier !== 1)
+            buffs.push(`회복 효율 x${state.player.healMultiplier.toFixed(1)}`);
+
+          els.buffsRow.innerHTML = buffs.length
+            ? buffs.map((b) => `<div class="buff-pill">${b}</div>`).join("")
+            : `<div class="buff-pill" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08);color:#d6dbe6;">활성 버프 없음</div>`;
+        }
+
+        function render() {
+          if (!state.player) return;
+          const char = CHARACTERS[state.player.charKey];
+          els.charAvatar.textContent = char.emoji;
+          els.charName.textContent = char.name;
+          els.charTrait.textContent = char.desc;
+          els.sceneText.textContent = `장면 ${state.stage}`;
+
+          const totalAtk = state.player.atk + state.player.buffs.atk;
+          els.hpText.textContent = `${state.player.hp} / ${state.player.maxHp}`;
+          els.hpFill.style.width = `${(state.player.hp / state.player.maxHp) * 100}%`;
+          els.atkStat.textContent = totalAtk;
+          els.cheeseStat.textContent = `${state.player.cheese} 🧀`;
+          els.lvStat.textContent = state.player.level;
+          els.xpText.textContent = `${state.player.xp} / ${state.player.xpToNext}`;
+          els.xpFill.style.width = `${(state.player.xp / state.player.xpToNext) * 100}%`;
+
+          renderBuffs();
+          updateEventInfoText();
+          renderProgress();
+          updateLikeButton();
+          updateShopButton();
+
+          els.stayIndicator.textContent =
+            state.currentEvent?.type === "trap"
+              ? "위험 누적 중..."
+              : state.currentEvent?.type === "shop"
+                ? "구매 대기 중..."
+                : "머무르는 중...";
+        }
+
+        function goNextScene() {
+          if (!state.running) return;
+          state.stage += 1;
+          generateNextEvent();
+        }
+
+        function likeCurrentEvent() {
+          if (!state.running || !state.currentEvent || state.currentEvent.liked)
+            return;
+          state.currentEvent.liked = true;
+          state.player.likesUsed += 1;
+          const message = state.currentTemplate.likeBonusEffect(
+            state,
+            state.currentEvent,
+          );
+          addLog(`좋아요! ${message}`);
+          updateLikeButton();
+          spawnHearts();
+          updateEventInfoText();
+          render();
+        }
+
+        function spawnHearts() {
+          const count = 5;
+          for (let i = 0; i < count; i++) {
+            const heart = document.createElement("div");
+            heart.className = "heart";
+            heart.textContent = Math.random() > 0.5 ? "❤" : "✨";
+            heart.style.setProperty("--x", `${randInt(-70, 70)}px`);
+            heart.style.left = `${50 + randInt(-12, 12)}%`;
+            heart.style.animationDelay = `${i * 0.05}s`;
+            els.floatingHearts.appendChild(heart);
+            setTimeout(() => heart.remove(), 1000);
+          }
+        }
+
+        function buyFromShop() {
+          if (!state.running || state.currentEvent?.type !== "shop") return;
+
+          const event = state.currentEvent;
+          const item = event.items.find((it) => {
+            const price = Math.max(1, it.cost - event.discount);
+            return state.player.cheese >= price;
+          });
+
+          if (!item) {
+            addLog("치즈가 부족해서 살 수 있는 물건이 없다.");
+            return;
+          }
+
+          const finalCost = Math.max(1, item.cost - event.discount);
+          state.player.cheese -= finalCost;
+
+          if (item.key === "heal") {
+            const before = state.player.hp;
+            state.player.hp = Math.min(
+              state.player.maxHp,
+              state.player.hp + 10,
+            );
+            addLog(
+              `상점 구매: 체력 ${state.player.hp - before} 회복 (-${finalCost} 치즈)`,
+            );
+          } else if (item.key === "atk") {
+            state.player.atk += 1;
+            addLog(`상점 구매: 공격력 +1 (-${finalCost} 치즈)`);
+          } else if (item.key === "hp") {
+            state.player.maxHp += 4;
+            state.player.hp += 4;
+            addLog(`상점 구매: 최대HP +4 (-${finalCost} 치즈)`);
+          }
+
+          render();
+        }
+
+        function gameOver() {
+          state.running = false;
+          stopLoop();
+
+          els.resScene.textContent = state.stage;
+          els.resLevel.textContent = state.player.level;
+          els.resCheese.textContent = `${state.player.totalCheeseEarned} 🧀`;
+          els.resKills.textContent = state.player.kills;
+          els.resLikes.textContent = state.player.likesUsed;
+          els.resChar.textContent = `${state.player.emoji} ${state.player.name}`;
+
+          els.gameOverOverlay.classList.add("active");
+        }
+
+        function resetToStart() {
+          stopLoop();
+          state.running = false;
+          els.gameOverOverlay.classList.remove("active");
+          els.gameScreen.classList.remove("active");
+          els.startScreen.classList.add("active");
+        }
+
+        function handleWheel(e) {
+          if (!state.running) return;
+          e.preventDefault();
+          if (e.deltaY > 0) goNextScene();
+        }
+
+        function handleKey(e) {
+          if (!state.running) return;
+          if (e.key === "ArrowDown") {
+            goNextScene();
+          } else if (e.key.toLowerCase() === "l") {
+            likeCurrentEvent();
+          } else if (e.key === " ") {
+            e.preventDefault();
+            if (state.currentEvent?.type === "shop") buyFromShop();
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+          }
+        }
+
+        function handleTouchStart(e) {
+          if (!state.running) return;
+          const touch = e.changedTouches[0];
+          state.touchStartY = touch.clientY;
+          state.touchStartX = touch.clientX;
+        }
+
+        function handleTouchMove(e) {
+          if (!state.running) return;
+          e.preventDefault();
+        }
+
+        function handleTouchEnd(e) {
+          if (!state.running || state.touchStartY === null) return;
+          const touch = e.changedTouches[0];
+          const endY = touch.clientY;
+          const endX = touch.clientX;
+          const diffY = state.touchStartY - endY;
+          const diffX = state.touchStartX - endX;
+
+          if (Math.abs(diffY) > 45 && Math.abs(diffY) > Math.abs(diffX)) {
+            if (diffY > 0) goNextScene();
+          }
+
+          state.touchStartY = null;
+          state.touchStartX = null;
+        }
+
+        els.startBtn.addEventListener("click", startGame);
+        els.restartBtn.addEventListener("click", resetToStart);
+        els.skipBtn.addEventListener("click", () => goNextScene());
+        els.likeBtn.addEventListener("click", likeCurrentEvent);
+        els.shopBtn.addEventListener("click", buyFromShop);
+
+        window.addEventListener("wheel", handleWheel, { passive: false });
+        window.addEventListener("keydown", handleKey);
+        els.app.addEventListener("touchstart", handleTouchStart, {
+          passive: true,
+        });
+        els.app.addEventListener("touchmove", handleTouchMove, {
+          passive: false,
+        });
+        els.app.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+        setupCharacterSelection();
+      })();
+    </script>
+  </body>
+</html>
