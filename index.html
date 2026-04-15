@@ -53,7 +53,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 14px;
+        padding: calc(18px + env(safe-area-inset-top)) 14px
+          calc(18px + env(safe-area-inset-bottom)) 14px;
         touch-action: none;
       }
 
@@ -66,7 +67,14 @@
 
       .app {
         width: min(100%, 430px);
-        height: min(100vh - 28px, 860px);
+        height: min(
+          calc(
+            100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) -
+              36px
+          ),
+          860px
+        );
+        max-height: 100%;
         background: rgba(15, 16, 21, 0.92);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 30px;
@@ -79,7 +87,7 @@
       .screen {
         position: absolute;
         inset: 0;
-        padding: 14px;
+        padding: 18px 14px 18px;
         display: none;
       }
 
