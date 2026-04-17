@@ -58,7 +58,7 @@
         touch-action: none;
       }
 
-      .version {
+      .version-box {
         position: relative;
         top: 30px;
         color: var(--muted);
@@ -1025,7 +1025,10 @@
 
         <button class="primary-btn" id="startBtn">게임 시작</button>
         <button class="secondary-btn" id="randomBtn">랜덤 캐릭터 선택</button>
-        <p id="version" class="version"></p>
+        <div class="version-box">
+          <p id="version" class="version"></p>
+          <p id="madeby">made by 코볼트 (코딩하는 볼란트)</p>
+        </div>
       </div>
 
       <div class="screen game-screen" id="gameScreen">
@@ -1145,7 +1148,7 @@
     <script>
       (() => {
         // 버전 관리(ver)
-        const VERSION = "1.1.9";
+        const VERSION = "v1.1.10";
         document.getElementById("version").textContent = VERSION;
 
         const BASE_STAY_TIME = 2000;
